@@ -1,11 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Gallery } from './components/Gallery';
-import { Modal } from './components/Modal';
+
+const appStyles = {
+  container: {
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    marginTop: '20px',
+  },
+  button: {
+    padding: '10px 20px',
+    fontSize: '16px',
+    margin: '0 10px',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
+  },
+};
 
 export function App() {
   const [index, setIndex] = useState(0);
   const [description, setDescription] = useState([]);
-  const [url, setUrl] = useState();
 
   useEffect(() => {
     fetch('descriptions.txt')
@@ -17,33 +38,25 @@ export function App() {
   }, []);
 
   const handleNext = () => {
-    if (index === description.length - 1) {
-      setIndex(0);
-    } else {
-      setIndex(index + 1);
-    }
+    setIndex((index + 1) % description.length);
   };
+
   const handlePrev = () => {
-    if (index === 0) {
-      setIndex(description.length - 1);
-    } else {
-      setIndex(index - 1);
-    }
+    setIndex((index - 1 + description.length) % description.length);
   };
 
   return (
-    <>
-      <Gallery description={description[index]} />
-      <Modal description={description[index]} />
+    <div style={appStyles.container}>
+      <Gallery description={description[index]} url={`./images/image${index}.png`} />
 
-      <ul>
-        {description.map((data, index) => (
-          <li index={index}>{data}</li>
-        ))}
-      </ul>
-
-      <button>Wstecz</button>
-      <button>Dalej</button>
-    </>
+      <div style={appStyles.buttonContainer}>
+        <button onClick={handlePrev} style={appStyles.button}>
+          Wstecz
+        </button>
+        <button onClick={handleNext} style={appStyles.button}>
+          Dalej
+        </button>
+      </div>
+    </div>
   );
 }
